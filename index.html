@@ -1,0 +1,232 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniVerseAI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Poppins:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+        {
+            "imports": {
+                "./script.js": "./script.js",
+                "./utils.js": "./utils.js",
+                "./ui.js": "./ui.js",
+                "./websim_data.js": "./websim_data.js",
+                "./ai_service.js": "./ai_service.js",
+                "./event_handlers.js": "./event_handlers.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="spinner"></div>
+        <p>Launching the Mind of the Universe…</p>
+        <div id="audio-enable-prompt" class="hidden">
+            <p>Click/Tap anywhere to enable sound</p>
+        </div>
+    </div>
+
+    <div id="main-layout" class="hidden">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>OmniVerseAI</h2>
+            </div>
+            <ul>
+                <li><a href="#" data-module="home" aria-label="Home module">🏠 Home</a></li>
+                <li><a href="#" data-module="chat" aria-label="Ask Anything chat module">🧠 Ask Anything</a></li>
+                <li><a href="#" data-module="ai-studio" aria-label="AI Studio module">✨ AI Studio</a></li>
+                <li><a href="#" data-module="image-lab" aria-label="Image Lab module">🎨 Image Lab</a></li>
+                <li><a href="#" data-module="music-studio" aria-label="Music Studio module">🎶 Music Studio</a></li>
+                <li><a href="#" data-module="voice-bot" aria-label="Voice Bot module">🗣️ Voice Bot</a></li>
+                <li><a href="#" data-module="roleplay-simulator" aria-label="Roleplay Simulator module">🎭 Roleplay Simulator</a></li>
+                <li><a href="#" data-module="documents" aria-label="Documents module">📄 Documents</a></li>
+                <li><a href="#" data-module="auto-agents" aria-label="Auto Agents module">🤖 Auto Agents</a></li>
+                <li><a href="#" data-module="code-lab" aria-label="Code Lab module">🧑‍💻 Code Lab</a></li>
+                <li><a href="#" data-module="tools" aria-label="Tools module">🧰 Tools</a></li>
+                <li><a href="#" id="sidebar-settings-button" aria-label="Open settings">🛠️ Settings</a></li>
+            </ul>
+        </nav>
+
+        <main id="chat-wrapper">
+            <header id="topbar">
+                <div class="topbar-left">
+                    <img src="https://images.websim.com/avatar/default_user" alt="User Avatar" class="user-avatar">
+                    <span class="user-greeting">Welcome!</span>
+                </div>
+                <div class="topbar-right">
+                    <button id="theme-toggle" aria-label="Toggle light and dark theme">☀️</button>
+                    <button id="topbar-settings-button" aria-label="Open settings">⚙️</button>
+                </div>
+            </header>
+
+            <div id="chat-container">
+                <div id="message-list" role="log" aria-live="polite">
+                    <!-- Messages will be appended here -->
+                </div>
+                <div id="typing-indicator" class="hidden" aria-live="polite" aria-atomic="true">
+                    <span></span><span></span><span></span>
+                </div>
+                <form id="chat-form">
+                    <label for="message-input" class="sr-only">Message input</label>
+                    <input type="text" id="message-input" placeholder="Ask OmniVerseAI anything..." autocomplete="off">
+                    
+                    <button type="button" id="voice-input-button" title="Voice Input" aria-label="Start voice input">🎤</button>
+                    <input type="file" id="file-upload-input" class="hidden" accept="*/*" aria-label="Upload a file">
+                    <button type="button" id="attach-file-button" title="Attach File" aria-label="Attach a file">📎</button>
+                    <button type="submit" id="send-button" aria-label="Send message">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-panel-title">
+        <h3 id="settings-panel-title">🛠️ Settings</h3>
+        <button id="close-settings-button" class="close-button" aria-label="Close settings panel">&times;</button>
+
+        <div class="setting-group">
+            <label>User Profile:</label>
+            <p>Username: <span id="settings-username-display">Loading...</span></p>
+            <label for="username-input">Custom Display Name:</label>
+            <input type="text" id="username-input" placeholder="Enter your display name">
+            <button class="settings-action-button" id="save-username-button">Save Display Name</button>
+            <label for="avatar-input">Change Avatar:</label>
+            <input type="file" id="avatar-input" accept="image/*">
+            <button class="settings-action-button" id="upload-avatar-button">Upload New Avatar</button>
+        </div>
+
+        <div class="setting-group">
+            <label for="persona-select">Assistant Personality:</label>
+            <select id="persona-select">
+                <option value="Friendly">Friend</option>
+                <option value="Developer">Developer</option>
+                <option value="Therapist">Therapist</option>
+                <option value="Sarcastic Genius">Sarcastic Genius</option>
+                <option value="Anime Girl">Anime Girl</option>
+                <option value="Virtual Partner">Virtual Partner</option>
+                <option value="Tutor">Tutor</option>
+                <option value="Hacker">Hacker</option>
+            </select>
+        </div>
+        <div class="setting-group">
+            <label for="voice-select">Voice Selection:</label>
+            <select id="voice-select">
+                <option value="en-male">Male AI</option>
+                <option value="en-female">Female AI</option>
+                <option value="none">None</option>
+            </select>
+        </div>
+        <div class="setting-group">
+            <label for="response-tone-select">Typing Style & Emotion Output:</label>
+            <select id="response-tone-select">
+                <option value="default">Default</option>
+                <option value="emoji-friendly">Emoji-Friendly</option>
+                <option value="emoji-free">Emoji-Free</option>
+                <option value="serious">Serious</option>
+                <option value="funny">Funny</option>
+                <option value="warm">Warm</option>
+                <option value="poetic">Poetic</option>
+            </select>
+        </div>
+        
+        <div class="setting-group">
+            <label>Memory Control:</label>
+            <label class="switch">
+                <input type="checkbox" id="long-term-memory-toggle" aria-label="Toggle long term memory">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Long-term memory saves your chats per section.</p>
+            <button class="settings-action-button" id="view-past-chats">View Past Chats (Current Section)</button>
+            <button class="settings-action-button" id="delete-memory">Delete Memory (Current Section)</button>
+        </div>
+
+        <div class="setting-group">
+            <label for="custom-instructions">Custom Instructions:</label>
+            <textarea id="custom-instructions" placeholder="e.g., Always explain things like a teacher"></textarea>
+        </div>
+
+        <div class="setting-group">
+            <label>Theme & UX Settings:</label>
+            <p class="settings-placeholder">Theme switching implemented by sun/moon toggle.</p>
+            <label for="ai-voice-responses-toggle" class="switch">
+                <input type="checkbox" id="ai-voice-responses-toggle" aria-label="Toggle AI voice responses">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable AI voice responses for messages.</p>
+        </div>
+
+        <div class="setting-group">
+            <label>Tool Preferences:</label>
+            <label for="enable-image-lab-toggle" class="switch">
+                <input type="checkbox" id="enable-image-lab-toggle" aria-label="Enable Image Lab module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Image Lab.</p>
+            <label for="enable-music-studio-toggle" class="switch">
+                <input type="checkbox" id="enable-music-studio-toggle" aria-label="Enable Music Studio module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Music Studio.</p>
+            <label for="enable-voice-bot-toggle" class="switch">
+                <input type="checkbox" id="enable-voice-bot-toggle" aria-label="Enable Voice Bot module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Voice Bot.</p>
+            <label for="enable-roleplay-simulator-toggle" class="switch">
+                <input type="checkbox" id="enable-roleplay-simulator-toggle" aria-label="Enable Roleplay Simulator module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Roleplay Simulator.</p>
+            <label for="enable-documents-toggle" class="switch">
+                <input type="checkbox" id="enable-documents-toggle" aria-label="Enable Documents module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Documents module.</p>
+            <label for="enable-auto-agents-toggle" class="switch">
+                <input type="checkbox" id="enable-auto-agents-toggle" aria-label="Enable Auto Agents module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Auto Agents.</p>
+            <label for="enable-code-lab-toggle" class="switch">
+                <input type="checkbox" id="enable-code-lab-toggle" aria-label="Enable Code Lab module">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable/disable Code Lab.</p>
+        </div>
+
+        <div class="setting-group">
+            <label>Privacy & Offline Mode:</label>
+            <label for="offline-mode-toggle" class="switch">
+                <input type="checkbox" id="offline-mode-toggle" aria-label="Toggle offline mode">
+                <span class="slider round"></span>
+            </label>
+            <p class="settings-placeholder">Enable offline mode (conceptual; uses local AI models if available).</p>
+            <button class="settings-action-button" id="clear-cache-button">Clear All App Data & Cache</button>
+        </div>
+
+        <div class="setting-group">
+            <label>Custom Triggers:</label>
+            <label for="custom-voice-commands">Custom Voice Commands (JSON):</label>
+            <textarea id="custom-voice-commands" placeholder='e.g., {"hello": "Say hello!"}'></textarea>
+            <p class="settings-placeholder">Define custom voice commands and their actions.</p>
+            <label for="custom-chat-shortcuts">Custom Chat Shortcuts (JSON):</label>
+            <textarea id="custom-chat-shortcuts" placeholder='e.g., {"/greet": "Hello there!"}'></textarea>
+            <p class="settings-placeholder">Define shortcuts for common chat phrases.</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Powered by OmniVerseAI | Developed by ApexGamerTV</p>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

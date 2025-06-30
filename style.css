@@ -1,0 +1,887 @@
+/* New Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Poppins:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    --bg-color: #0A0B0E; /* Darker, almost black for cosmic feel */
+    --surface-color: #1A1B20; /* Dark blue-grey for containers */
+    --primary-color: #00FFC2; /* Neon Cyan */
+    --accent-color: #FF00FF; /* Neon Magenta */
+    --text-color: #E0E0E0;
+    --user-msg-bg: #2C2D35; /* Slightly lighter than surface */
+    --ai-msg-bg: #1F2028; /* Darker, with a subtle blue tint */
+    --input-bg: #22232B;
+    --sidebar-bg: #111215;
+    --topbar-bg: #15161A;
+    --settings-bg: #1A1B20;
+}
+
+/* Ensure box-sizing is consistent across the project */
+html {
+    box-sizing: border-box;
+    height: 100%; /* Ensure html takes full height */
+    overflow-x: hidden; /* Prevent horizontal scrolling caused by layout shifts, ensuring better fit on all screens */
+}
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Changed to column to stack main content and footer */
+    min-height: 100vh; /* Allows body to grow beyond viewport height and scroll */
+    height: 100%; /* Ensure body takes full height */
+    overflow-y: auto; /* Enable scrolling for the body itself */
+    padding-bottom: 35px; /* Add padding to account for fixed footer, adjusted from 40px */
+    font-size: 0.875rem; /* Smaller base font size for overall UI reduction */
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Loading Screen Styles */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--bg-color), #050608);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    font-family: 'Orbitron', sans-serif; /* For futuristic loading text */
+    font-size: 1.3rem; /* Slightly smaller */
+    gap: 15px; /* Slightly smaller gap */
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.spinner {
+    width: 70px; /* Slightly smaller */
+    height: 70px; /* Slightly smaller */
+    border: 7px solid rgba(255, 255, 255, 0.1); /* Adjusted border */
+    border-top: 7px solid var(--primary-color);
+    border-left: 7px solid var(--accent-color); /* Add accent color */
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+    box-shadow: 0 0 18px rgba(0, 255, 194, 0.7), 0 0 35px rgba(255, 0, 255, 0.4); /* Neon glow */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Audio Enable Prompt styles */
+#audio-enable-prompt {
+    position: absolute;
+    bottom: 40px; /* Adjusted for smaller footer */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px; /* Slightly smaller padding */
+    border-radius: 12px; /* Slightly smaller border-radius */
+    font-size: 0.8rem; /* Slightly smaller font */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.5);
+    cursor: pointer;
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#audio-enable-prompt.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+/* Main Layout */
+#main-layout {
+    display: flex;
+    width: 100%;
+    flex-grow: 1; /* Allow main layout to fill available vertical space */
+    max-width: none;
+    box-shadow: none;
+    padding: 10px; /* Adjusted padding from 15px */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+#main-layout.hidden {
+    display: none;
+}
+
+/* Sidebar */
+#sidebar {
+    width: 220px; /* Slightly narrower */
+    background-color: var(--sidebar-bg);
+    padding: 15px; /* Adjusted padding from 20px */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    overflow-y: auto; /* Enable scrolling for sidebar */
+}
+
+/* Sidebar Scrollbar */
+#sidebar::-webkit-scrollbar {
+    width: 6px; /* Slightly thinner */
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background-color: #4f4f4f;
+    border-radius: 3px; /* Adjusted radius */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 25px; /* Slightly smaller margin */
+}
+
+.sidebar-header h2 {
+    font-family: 'Orbitron', sans-serif; /* More futuristic font */
+    color: var(--primary-color);
+    font-size: 1.6rem; /* Slightly smaller */
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px var(--primary-color), 0 0 18px rgba(255, 0, 255, 0.5); /* Stronger neon glow */
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar ul li {
+    margin-bottom: 8px; /* Slightly smaller margin */
+}
+
+#sidebar ul li a {
+    display: block;
+    padding: 10px 12px; /* Adjusted padding from 12px 15px */
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 6px; /* Slightly smaller border-radius */
+    transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+    font-size: 0.95rem; /* Slightly smaller */
+    font-weight: 500;
+}
+
+#sidebar ul li a:hover {
+    background-color: #2F3038; /* A subtle hover color */
+    transform: translateX(3px); /* Slightly smaller transform */
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.3); /* Subtle primary glow on hover */
+}
+
+/* Style for active sidebar link */
+#sidebar ul li a.active {
+    background-color: #2F3038; /* A subtle hover color */
+    transform: translateX(3px);
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.5); /* Stronger glow for active */
+    color: var(--primary-color);
+}
+
+/* Chat Wrapper (contains topbar and chat-container) */
+#chat-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-color);
+    border-radius: 10px; /* Slightly smaller radius */
+    overflow: hidden;
+    /* Removed margin: 15px; as padding is now on #main-layout */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 0 8px rgba(0, 255, 194, 0.05); /* Soft outer shadow, subtle inner glow */
+}
+
+/* Topbar */
+#topbar {
+    background-color: var(--topbar-bg);
+    padding: 0.8rem 1.2rem; /* Adjusted padding from 1rem 1.5rem */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Slightly smaller gap */
+}
+
+.user-avatar {
+    width: 36px; /* Slightly smaller */
+    height: 36px; /* Slightly smaller */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 7px var(--primary-color); /* Avatar glow */
+}
+
+.user-greeting {
+    font-weight: 500;
+    font-size: 1rem; /* Slightly smaller */
+    color: var(--primary-color); /* Primary color for greeting */
+}
+
+.topbar-right button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.3rem; /* Slightly smaller */
+    cursor: pointer;
+    color: var(--text-color);
+    transition: transform 0.2s, text-shadow 0.2s;
+    margin-left: 8px; /* Slightly smaller margin */
+}
+
+.topbar-right button:hover {
+    transform: scale(1.08); /* Slightly smaller scale */
+    text-shadow: 0 0 8px var(--primary-color);
+}
+
+/* Original header display set to none */
+header {
+    display: none;
+}
+
+/* Original chat-container styles now apply within chat-wrapper */
+#chat-container {
+    width: auto;
+    max-width: none;
+    height: auto;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    flex-grow: 1;
+    display: flex; /* Added flex for proper height distribution */
+    flex-direction: column; /* Added flex for proper height distribution */
+}
+
+#message-list {
+    flex-grow: 1;
+    padding: 1rem; /* Adjusted padding from 1.5rem */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Slightly smaller gap */
+}
+
+/* Stylized Scrollbars for Chat Messages */
+#message-list::-webkit-scrollbar {
+    width: 6px; /* Slightly thinner */
+}
+
+#message-list::-webkit-scrollbar-track {
+    background: #111215; /* Darker track, similar to sidebar background */
+    border-radius: 3px;
+}
+
+#message-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); /* Neon gradient thumb */
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Small border for definition */
+}
+
+#message-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    box-shadow: 0 0 7px rgba(0, 255, 194, 0.7); /* Glow on hover */
+}
+/* End Stylized Scrollbars for Chat Messages */
+
+.message {
+    max-width: 85%; /* Allow slightly more width */
+    padding: 0.6rem 1rem; /* Adjusted padding from 0.75rem 1.25rem */
+    border-radius: 16px; /* Slightly smaller radius */
+    line-height: 1.4; /* Slightly tighter line height */
+    word-wrap: break-word;
+    opacity: 0;
+    transform: translateY(15px); /* Slightly smaller transform */
+    animation: fadeIn 0.3s ease-out forwards;
+    /* Glassmorphism effect */
+    background: rgba(44, 45, 53, 0.4); /* User message base */
+    backdrop-filter: blur(8px); /* Slightly less blur */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Lighter border */
+}
+
+.message pre {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 6px; /* Slightly smaller radius */
+    padding: 8px; /* Slightly smaller padding */
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85em; /* Slightly smaller font */
+    border: 1px solid rgba(0, 255, 194, 0.15);
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.1);
+}
+
+.message code {
+    color: var(--primary-color);
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    background: linear-gradient(145deg, rgba(44, 45, 53, 0.6), rgba(60, 61, 70, 0.6));
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    color: #e0e0e0;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2); /* Adjusted shadow */
+}
+
+.message.ai {
+    background: linear-gradient(145deg, rgba(31, 32, 40, 0.6), rgba(45, 46, 55, 0.6));
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+
+.message.ai img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin-top: 8px;
+    display: block;
+    box-shadow: 0 0 12px rgba(0, 255, 194, 0.2); /* Subtle glow for images */
+}
+
+/* File attachment display */
+.file-attachment-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px; /* Space from text if present */
+    padding: 6px 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.file-attachment-container svg {
+    flex-shrink: 0;
+    color: var(--accent-color);
+}
+
+.file-attachment-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    word-break: break-all; /* Ensure long filenames wrap */
+}
+
+.file-attachment-link:hover {
+    text-decoration: underline;
+}
+
+.file-info-text {
+    font-size: 0.75em;
+    color: #999;
+    flex-shrink: 0;
+}
+
+#chat-form {
+    display: flex;
+    padding: 0.8rem; /* Adjusted padding from 1rem */
+    gap: 0.6rem; /* Adjusted gap from 0.75rem */
+    border-top: 1px solid #3a3a3a;
+    flex-shrink: 0; /* Prevent form from shrinking */
+}
+
+#message-input {
+    flex-grow: 1;
+    background-color: var(--input-bg);
+    border: 1px solid #4a4a4a;
+    border-radius: 24px; /* Slightly smaller radius */
+    padding: 0.6rem 1rem; /* Adjusted padding from 0.75rem 1.25rem */
+    color: var(--text-color);
+    font-size: 0.9rem; /* Slightly smaller font */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#message-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px rgba(0, 255, 194, 0.4); /* Neon glow on focus */
+}
+
+#send-button, #voice-input-button, #attach-file-button {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); /* Gradient button */
+    border: none;
+    border-radius: 50%;
+    width: 40px; /* Adjusted size from 48px */
+    height: 40px; /* Adjusted size from 48px */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    flex-shrink: 0;
+    font-size: 1.3rem; /* Adjusted font size from 1.5rem */
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.5); /* Initial glow */
+}
+
+#send-button:hover, #voice-input-button:hover, #attach-file-button:hover {
+    background-color: #9b59b6; /* Fallback */
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); /* Maintain gradient */
+    box-shadow: 0 0 18px rgba(0, 255, 194, 0.8), 0 0 25px rgba(255, 0, 255, 0.5); /* Stronger glow on hover */
+}
+
+#send-button:active, #voice-input-button:active, #attach-file-button:active {
+    transform: scale(0.96); /* Slightly less shrink */
+    box-shadow: 0 0 4px rgba(0, 255, 194, 0.3); /* Subtler glow on active */
+}
+
+#typing-indicator {
+    padding: 0 1rem 0.4rem; /* Adjusted padding */
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Slightly smaller gap */
+}
+
+#typing-indicator.hidden {
+    display: none;
+}
+
+#typing-indicator span {
+    width: 6px; /* Adjusted size from 8px */
+    height: 6px; /* Adjusted size from 8px */
+    background-color: var(--primary-color); /* Neon dots */
+    border-radius: 50%;
+    animation: typing 1s infinite ease-in-out;
+    box-shadow: 0 0 6px rgba(0, 255, 194, 0.7); /* Dot glow */
+}
+
+#typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+#typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-3px); /* Slightly less vertical movement */
+    }
+}
+
+/* Settings Panel */
+#settings-panel {
+    position: fixed;
+    top: 0;
+    right: -280px; /* Hidden off-screen, Adjusted width from 350px */
+    width: 280px; /* Adjusted width from 300px */
+    height: 100%;
+    background-color: var(--settings-bg);
+    box-shadow: -4px 0 12px rgba(0,0,0,0.4);
+    z-index: 999;
+    padding: 15px; /* Adjusted padding from 20px */
+    transition: right 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Enable scrolling for settings panel */
+}
+
+/* Settings Panel Scrollbar */
+#settings-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#settings-panel::-webkit-scrollbar-track {
+    background: var(--settings-bg);
+}
+
+#settings-panel::-webkit-scrollbar-thumb {
+    background-color: #4f4f4f;
+    border-radius: 3px;
+}
+
+#settings-panel.active {
+    right: 0; /* Slide in */
+}
+
+#settings-panel h3 {
+    margin-top: 0;
+    margin-bottom: 20px; /* Slightly smaller margin */
+    color: var(--primary-color);
+    font-family: 'Orbitron', sans-serif; /* Consistent with branding */
+    font-size: 1.4rem; /* Adjusted font size from 1.6rem */
+    position: relative;
+    text-shadow: 0 0 8px rgba(0, 255, 194, 0.7);
+}
+
+.close-button {
+    position: absolute;
+    top: 8px; /* Adjusted position */
+    right: 8px; /* Adjusted position */
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.8rem; /* Slightly smaller font */
+    cursor: pointer;
+    padding: 3px; /* Slightly smaller padding */
+}
+
+.setting-group {
+    margin-bottom: 15px; /* Slightly smaller margin */
+    display: flex;
+    flex-direction: column;
+    padding: 8px; /* Adjusted padding from 10px */
+    border: 1px solid rgba(255,255,255,0.05); /* Subtle border for groups */
+    border-radius: 6px; /* Slightly smaller radius */
+    background: rgba(26,27,32,0.6); /* Slightly lighter background for group */
+}
+
+.setting-group label {
+    margin-bottom: 6px; /* Slightly smaller margin */
+    font-weight: 500;
+    font-size: 0.85rem; /* Adjusted font size from 0.95rem */
+    color: var(--primary-color); /* Neon primary color for labels */
+    text-shadow: 0 0 4px rgba(0, 255, 194, 0.3);
+}
+
+.setting-group select,
+.setting-group textarea,
+.setting-group input[type="file"],
+.setting-group input[type="text"] { 
+    background-color: var(--input-bg);
+    border: 1px solid #4a4a4a;
+    border-radius: 6px; /* Slightly smaller radius */
+    padding: 8px; /* Adjusted padding from 10px */
+    color: var(--text-color);
+    font-size: 0.8rem; /* Slightly smaller font */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+}
+
+.setting-group select:focus,
+.setting-group textarea:focus,
+.setting-group input[type="file"]:focus,
+.setting-group input[type="text"]:focus { 
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 255, 194, 0.4);
+}
+
+.settings-action-button {
+    background: linear-gradient(45deg, #00BFFF, #8A2BE2); /* Blue to Purple gradient */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Slightly smaller radius */
+    padding: 8px 12px; /* Adjusted padding from 10px 15px */
+    margin-top: 8px; /* Slightly smaller margin */
+    cursor: pointer;
+    font-size: 0.8rem; /* Slightly smaller font */
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 8px rgba(138, 43, 226, 0.5);
+}
+
+.settings-action-button:hover {
+    transform: translateY(-1px); /* Slightly less transform */
+    box-shadow: 0 0 12px rgba(138, 43, 226, 0.8);
+}
+
+.settings-placeholder {
+    font-size: 0.75rem; /* Slightly smaller font */
+    color: #999;
+    margin-top: 4px; /* Slightly smaller margin */
+}
+
+/* Toggle Switch Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Adjusted width from 50px */
+  height: 22px; /* Adjusted height from 28px */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px; /* Adjusted height from 20px */
+  width: 16px; /* Adjusted width from 20px */
+  left: 3px; /* Adjusted left from 4px */
+  bottom: 3px; /* Adjusted bottom from 4px */
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px); /* Adjusted transform from 20px */
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 22px; /* Adjusted radius */
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Light Theme styles */
+body.light-theme {
+    --bg-color: #f0f0f0;
+    --surface-color: #ffffff;
+    --primary-color: #673ab7; /* Original primary */
+    --accent-color: #9c27b0; /* Original accent */
+    --text-color: #333333;
+    --user-msg-bg: #e0e0e0;
+    --ai-msg-bg: #f5f5f5;
+    --input-bg: #eeeeee;
+    --sidebar-bg: #f8f8f8;
+    --topbar-bg: #ffffff;
+    --settings-bg: #ffffff;
+}
+
+body.light-theme #sidebar-header h2,
+body.light-theme .sidebar-header h2 {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 8px rgba(103, 58, 183, 0.6);
+}
+
+body.light-theme .user-avatar {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+body.light-theme .user-greeting {
+    color: var(--text-color);
+}
+body.light-theme #send-button, 
+body.light-theme #voice-input-button,
+body.light-theme #attach-file-button {
+    background: var(--primary-color);
+    box-shadow: none;
+}
+body.light-theme #send-button:hover,
+body.light-theme #voice-input-button:hover,
+body.light-theme #attach-file-button:hover {
+    background-color: #9b59b6;
+    box-shadow: none;
+}
+body.light-theme .spinner {
+    border-top: 7px solid var(--primary-color);
+    border-left: 7px solid var(--accent-color);
+    box-shadow: none;
+}
+body.light-theme .message.user,
+body.light-theme .message.ai {
+    backdrop-filter: none;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+body.light-theme .message.user {
+    background: var(--user-msg-bg);
+}
+body.light-theme .message.ai {
+    background: var(--ai-msg-bg);
+}
+body.light-theme #settings-panel h3 {
+    text-shadow: none;
+}
+body.light-theme .setting-group label {
+    color: #555;
+    text-shadow: none;
+}
+body.light-theme .settings-action-button {
+    box-shadow: none;
+}
+
+/* Footer Styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35px; /* Adjusted height from 40px */
+    background-color: var(--sidebar-bg); /* Match sidebar background */
+    color: var(--text-color);
+    text-align: center;
+    padding: 8px 0; /* Adjusted padding */
+    font-size: 0.75rem; /* Adjusted font size from 0.8rem */
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+    z-index: 900; /* Below settings panel, above main content */
+    display: flex; /* Make it a flex container */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    box-sizing: border-box; /* Include padding in the height */
+}
+
+body.light-theme footer {
+    background-color: var(--sidebar-bg);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        display: none;
+    }
+
+    #main-layout {
+        padding: 5px; /* Even less padding on small screens */
+    }
+
+    #chat-wrapper {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #chat-container {
+        /* This ensures the chat container takes the full viewport height minus the fixed footer, preventing overlap */
+        height: calc(100vh - 35px);
+        border-radius: 0;
+    }
+
+    .message {
+        max-width: 95%; /* More width on small screens */
+    }
+
+    #settings-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    #topbar {
+        padding: 0.6rem 0.8rem; /* Smaller padding for topbar on small screens */
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .user-greeting {
+        font-size: 0.9rem;
+    }
+
+    #message-input {
+        font-size: 0.85rem;
+    }
+
+    #send-button, #voice-input-button, #attach-file-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 0.8rem;
+    }
+
+    #loading-screen {
+        font-size: 1.1rem;
+    }
+
+    .spinner {
+        width: 60px;
+        height: 60px;
+        border-width: 6px;
+    }
+
+    #sidebar ul li a {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .message {
+        padding: 0.5rem 0.8rem;
+    }
+
+    #message-input {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    #chat-form {
+        gap: 0.5rem;
+    }
+
+    #send-button, #voice-input-button, #attach-file-button {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+
+    #settings-panel h3 {
+        font-size: 1.2rem;
+    }
+
+    .settings-action-button {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+}
